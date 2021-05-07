@@ -33,9 +33,11 @@ spec:
            secretKeyRef:
              name: db-creds
              key: sql-user
-         #value: "sqladminmBp2514"
        - name: SQL_PASSWORD
-         value: "bA1uq1Ak9"
+         valueFrom:
+           secretKeyRef:
+             name: db-creds
+             key: sql-password
        - name: SQL_DBNAME
          value: "mydrivingDB"
        volumeMounts:
