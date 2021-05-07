@@ -11,28 +11,49 @@ spec:
   rules:
   - http:
       paths:
-      - path: /api/trips/(.*)
+      - path: /api/trips
         pathType: Prefix
         backend:
           service:
             name: tripapi-service
             port:
               number: 80
-      - path: /api/poi/(.*)
+      - path: /api/docs/trips
+        pathType: Exact
+        backend:
+          service:
+            name: tripapi-service
+            port:
+              number: 80
+      - path: /metrics
+        pathType: Exact
+        backend:
+          service:
+            name: tripapi-service
+            port:
+              number: 80
+      - path: /api/json
+        pathType: Exact
+        backend:
+          service:
+            name: tripapi-service
+            port:
+              number: 80
+      - path: /api/poi
         pathType: Prefix
         backend:
           service:
             name: poi-service
             port:
               number: 80
-      - path: /api/user-java/(.*)
+      - path: /api/user-java
         pathType: Prefix
         backend:
           service:
             name: user-java-service
             port:
               number: 80
-      - path: /api/user/(.*)
+      - path: /api/user
         pathType: Prefix
         backend:
           service:
