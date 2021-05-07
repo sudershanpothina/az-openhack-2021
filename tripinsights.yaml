@@ -42,4 +42,4 @@ spec:
   selector: 
     name: viewer
     version: "1.0"
-  type: LoadBalancer
+  type: ClusterIP
