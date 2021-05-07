@@ -39,3 +39,18 @@ spec:
              key: sql-password
        - name: SQL_DBNAME
          value: "mydrivingDB"
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: userprofile-service
+  namespace: tripinsights-api
+  labels: 
+    name: userprofile
+spec:
+  ports:
+  - port: 80
+  selector: 
+    name: userprofile
+    version: "1.0"
+  type: ClusterIP
