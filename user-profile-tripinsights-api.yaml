@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: userprofile-1.0
+ namespace: tripinsights-api
+ labels:
+   version: "1.0"
+   name: userprofile
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+     name: userprofile
+     version: "1.0"
+  template:
+   metadata:
+     labels:
+       name: userprofile
+       version: "1.0"
+   spec:
+     containers:
+     - image: registrymbp2514.azurecr.io/tripinsights/userprofile:1.0
+       imagePullPolicy: Always
+       name: userprofile
+       ports:
+       - containerPort: 80
+       env:
+       - name: SQL_SERVER
+         value: "sqlservermbp2514.database.windows.net"
+       - name: SQL_USER
+         valueFrom:
+           secretKeyRef:
+             name: db-creds
+             key: sql-user
+       - name: SQL_PASSWORD
+         valueFrom:
+           secretKeyRef:
+             name: db-creds
+             key: sql-password
+       - name: SQL_DBNAME
+         value: "mydrivingDB"
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: userprofile-service
+  namespace: tripinsights-api
+  labels: 
+    name: userprofile
+spec:
+  ports:
+  - port: 80
+  selector: 
+    name: userprofile
+    version: "1.0"
+  type: ClusterIP
