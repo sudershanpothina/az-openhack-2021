@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: tripapi-1.0
+ namespace: tripinsights
+ labels:
+   version: "1.0"
+   name: tripapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+     name: tripapi
+     version: "1.0"
+  template:
+   metadata:
+     labels:
+       name: tripapi
+       version: "1.0"
+   spec:
+     containers:
+     - image: registrymbp2514.azurecr.io/tripinsights/tripapi:1.0
+       imagePullPolicy: Always
+       name: tripapi
+       ports:
+       - containerPort: 80
+       env:
+       - name: SQL_SERVER
+         value: "sqlservermbp2514.database.windows.net"
+       - name: SQL_USER
+         value: "sqladminmBp2514"
+       - name: SQL_PASSWORD
+         value: "bA1uq1Ak9"
+       - name: SQL_DBNAME
+         value: "mydrivingDB"
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: tripapi-service
+  labels: 
+    name: tripapi
+spec:
+  ports:
+  - port: 80
+  selector: 
+    name: tripapi
+    version: "1.0"
+  type: ClusterIP

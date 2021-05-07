@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: viewer-1.0
+ namespace: tripinsights
+ labels:
+   version: "1.0"
+   name: viewer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+     name: viewer
+     version: "1.0"
+  template:
+   metadata:
+     labels:
+       name: viewer
+       version: "1.0"
+   spec:
+     containers:
+     - image: registrymbp2514.azurecr.io/tripinsights/tripviewer:1.0
+       imagePullPolicy: Always
+       name: viewer
+       ports:
+       - containerPort: 80
+       env:
+       - name: USERPROFILE_API_ENDPOINT
+         value: "http://userprofile-service"
+       - name: TRIPS_API_ENDPOINT
+         value: "http://tripapi-service"
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: viewer-service
+  labels: 
+    name: viewer
+spec:
+  ports:
+  - port: 80
+  selector: 
+    name: viewer
+    version: "1.0"
+  type: LoadBalancer

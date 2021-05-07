@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: poi-1.0
+ labels:
+   version: "1.0"
+   name: poi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+     name: poi
+     version: "1.0"
+  template:
+   metadata:
+     labels:
+       name: poi
+       version: "1.0"
+   spec:
+     containers:
+     - image: registrymbp2514.azurecr.io/tripinsights/poi:1.0
+       imagePullPolicy: Always
+       name: poi
+       ports:
+       - containerPort: 80
+       env:
+       - name: ASPNETCORE_ENVIRONMENT
+         value: "Production"
+       - name: SQL_SERVER
+         value: "sqlservermbp2514.database.windows.net"
+       - name: SQL_USER
+         valueFrom:
+           secretKeyRef:
+             name: db-creds
+             key: sql-user
+         #value: "sqladminmBp2514"
+       - name: SQL_PASSWORD
+         value: "bA1uq1Ak9"
+       - name: SQL_DBNAME
+         value: "mydrivingDB"
+       volumeMounts:
+        - name: secrets-store-inline
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+     volumes:
+       - name: secrets-store-inline
+         csi:
+           driver: secrets-store.csi.k8s.io
+           readOnly: true
+           volumeAttributes:
+             secretProviderClass: tripinsights-vault-123
+           nodePublishSecretRef:
+             name: secrets-store-creds
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: poi-service
+  labels:
+    name: poi
+spec:
+  ports:
+  - port: 80
+  selector:
+    name: poi
+    version: "1.0"
+  type: ClusterIP
